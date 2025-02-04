@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const Color backgroundColor = Color(0xFFF7F7F7);
+const Color backgroundColor = Color(0xFFffffff);
 const Color titleColor = Color(0xFF353535);
 const Color textColor = Color(0xFF353535);
 const Color mutedIconColor = Color(0xFFA1A1A1);
@@ -30,11 +30,11 @@ const errorColor = Color(0xFFB00020);
 
 // Text colors that contrast with the background colors
 const onprimaryColor =
-    Color(0xFFFFFFFF); // Text color used on primary (blue) color background
+    Color(0xFFD8204C); // Text color used on primary (blue) color background
 const onSecondaryColor =
-    Color(0xFF303030); // Text color used on secondary (black) color background
+    Color(0xFFffffff); // Text color used on secondary (black) color background
 const onTertiaryColor =
-    Color(0xFFFFFFFF); // Text color used on tertiary (gray) color background
+    Color(0xFF0000000); // Text color used on tertiary (gray) color background
 const onSurfaceColor =
     Color(0xFF7A7A7A); // Text color used on surface (white) color
 const onErrorColor =
@@ -45,7 +45,7 @@ const Color onSecondaryContainer = Color(0xFF000000); //text color
 const Color shadowColor = Color.fromARGB(15, 0, 0, 0);
 const Color dividerColor = Color(0xFFE6E6E6);
 
-ThemeData Mode = ThemeData(
+ThemeData appTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,
   scaffoldBackgroundColor: backgroundColor,
@@ -71,7 +71,7 @@ ThemeData Mode = ThemeData(
     displayMedium: TextStyle(color: onSecondaryColor),
     displaySmall: TextStyle(color: onSecondaryColor),
   ),
-  fontFamily: 'GeneralSans',
+  fontFamily: 'Poppins',
   colorScheme: const ColorScheme.light(
     primary: primaryColor, //primary color for button,text etc
     onPrimary: onprimaryColor, // text color on primary
@@ -97,14 +97,15 @@ ThemeData Mode = ThemeData(
   ),
   inputDecorationTheme: InputDecorationTheme(
     isDense: true,
+    labelStyle: const TextStyle(color: onTertiaryColor),
     suffixIconColor: iconColor,
     prefixIconColor: iconColor,
     floatingLabelBehavior: FloatingLabelBehavior.auto,
     contentPadding: const EdgeInsets.symmetric(
-      vertical: 5,
-      horizontal: 8,
+      vertical: 15,
+      horizontal: 10,
     ),
-    fillColor: cardBackgroundColor,
+    fillColor: backgroundColor,
     filled: true,
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),

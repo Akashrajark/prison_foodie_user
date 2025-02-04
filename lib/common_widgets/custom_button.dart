@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/app_theme.dart';
 
@@ -9,6 +10,8 @@ class CustomButton extends StatefulWidget {
   final Color color, backGroundColor;
   final Function()? onPressed;
   final bool inverse, isLoading;
+  final double fontsize;
+  final double containerWidth;
 
   const CustomButton({
     super.key,
@@ -18,7 +21,9 @@ class CustomButton extends StatefulWidget {
     this.inverse = false,
     this.isLoading = false,
     required this.onPressed,
-    this.backGroundColor = primaryColor,
+    this.backGroundColor = onprimaryColor,
+    this.fontsize = 20,
+    this.containerWidth = 250,
   });
 
   @override
@@ -31,9 +36,10 @@ class _CustomButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
+      width: widget.containerWidth,
       duration: const Duration(milliseconds: 100),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).colorScheme.shadow,
@@ -46,7 +52,7 @@ class _CustomButtonState extends State<CustomButton> {
             blurRadius: !_hovering ? 0 : 2,
           ),
         ],
-        color: widget.inverse ? widget.backGroundColor : Colors.white,
+        color: widget.inverse ? widget.backGroundColor : onprimaryColor,
         border: widget.inverse
             ? null
             : Border.all(
@@ -75,14 +81,13 @@ class _CustomButtonState extends State<CustomButton> {
                 : MainAxisAlignment.center,
             children: [
               if (widget.label != null && !widget.isLoading)
-                Text(
-                  widget.label!,
-                  textAlign: TextAlign.end,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: widget.inverse ? Colors.white : widget.color,
-                      ),
-                ),
+                Text(widget.label!,
+                    textAlign: TextAlign.end,
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.normal,
+                      fontSize: widget.fontsize,
+                      color: widget.inverse ? Colors.white : onSecondaryColor,
+                    )),
               SizedBox(
                   width:
                       widget.label != null && widget.iconData != null ? 5 : 0),
