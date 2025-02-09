@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:prison_foodie_user/common_widgets/custom_button.dart';
+import 'package:prison_foodie_user/common_widget/custom_button.dart';
 import 'package:prison_foodie_user/features/address_screen/address_screen.dart';
 import 'package:prison_foodie_user/features/profile/profile_edit_page.dart';
 import 'package:prison_foodie_user/theme/app_theme.dart';
@@ -50,6 +50,7 @@ class ProfileScreen extends StatelessWidget {
           Align(
             alignment: Alignment.bottomRight,
             child: CustomButton(
+              inverse: true,
               label: 'Edit',
               onPressed: () {
                 Navigator.push(
@@ -58,8 +59,6 @@ class ProfileScreen extends StatelessWidget {
                       builder: (context) => const ProfileEditPage(),
                     ));
               },
-              fontsize: 15,
-              containerWidth: 90,
             ),
           ),
           const SizedBox(

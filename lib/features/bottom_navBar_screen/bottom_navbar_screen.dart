@@ -12,9 +12,8 @@ class CustomBottomNavBar extends StatefulWidget {
   State<CustomBottomNavBar> createState() => _CustomBottomNavBarState();
 }
 
-int selectedindex = 0;
-
 class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
+  int selectedindex = 0;
   final List pages = [
     const HomeScreen(),
     const OrderScreen(),

@@ -5,50 +5,66 @@ import 'package:prison_foodie_user/common_widget/custom_alert_dialog.dart';
 import 'package:prison_foodie_user/common_widget/custom_button.dart';
 import 'package:prison_foodie_user/common_widget/custom_text_formfield.dart';
 import 'package:prison_foodie_user/features/bottom_navBar_screen/bottom_navbar_screen.dart';
-import 'package:prison_foodie_user/features/signin/signin_screen.dart';
+
+import 'package:prison_foodie_user/features/signin/signin_bloc/signin_bloc.dart';
+
+import 'package:prison_foodie_user/features/signup/signup_screen.dart';
 import 'package:prison_foodie_user/theme/app_theme.dart';
 import 'package:prison_foodie_user/util/value_validator.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'sign_up_bloc/sign_up_bloc.dart';
-
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+class SigninScreen extends StatefulWidget {
+  const SigninScreen({super.key});
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  State<SigninScreen> createState() => _SigninScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
-  final TextEditingController _uesrnameController = TextEditingController();
+class _SigninScreenState extends State<SigninScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _phoneNoController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    Future.delayed(
+        const Duration(
+          milliseconds: 100,
+        ), () {
+      User? currentUser = Supabase.instance.client.auth.currentUser;
+      if (currentUser != null) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => CustomBottomNavBar(),
+          ),
+        );
+      }
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
+      backgroundColor: backgroundColor,
       body: BlocProvider(
-        create: (context) => SignUpBloc(),
-        child: BlocConsumer<SignUpBloc, SignUpState>(
+        create: (context) => SigninBloc(),
+        child: BlocConsumer<SigninBloc, SigninState>(
           listener: (context, state) {
-            if (state is SignUpFailureState) {
-              showDialog(
-                context: context,
-                builder: (context) => CustomAlertDialog(
-                  title: 'Failure',
-                  description: state.message,
-                  primaryButton: 'Try Again',
-                  onPrimaryPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              );
-            } else if (state is SignUpSuccessState) {
+            if (state is SigninSuccessState) {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => CustomBottomNavBar()),
                 (route) => false,
+              );
+            } else if (state is SigninFailureState) {
+              showDialog(
+                context: context,
+                builder: (context) => CustomAlertDialog(
+                  title: 'Failed',
+                  description: state.message,
+                  primaryButton: 'Ok',
+                ),
               );
             }
           },
@@ -83,7 +99,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Form(
-                      key: _formKey,
+                      key: _formkey,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,7 +124,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                           ),
                           Text(
-                            'SIGNUP',
+                            'LOGIN',
                             style: GoogleFonts.poppins(
                               color: onTertiaryColor,
                               fontSize: 24,
@@ -116,17 +132,6 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                           ),
                           const SizedBox(height: 30),
-                          // CustomTextfield(
-                          //   validator: alphabeticWithSpaceValidator,
-                          //   hinttext: 'username',
-                          //   controller: _uesrnameController,
-                          // ),
-                          CustomTextFormField(
-                              labelText: 'username',
-                              controller: _uesrnameController,
-                              validator: alphabeticWithSpaceValidator),
-
-                          const SizedBox(height: 10),
                           // CustomTextfield(
                           //   validator: emailValidator,
                           //   hinttext: 'email',
@@ -138,27 +143,16 @@ class _SignupScreenState extends State<SignupScreen> {
                               validator: emailValidator),
 
                           const SizedBox(height: 10),
-                          // CustomTextfield(
-                          //   validator: passwordValidator,
-                          //   hinttext: 'password',
-                          //   controller: _passwordController,
-                          // ),
                           CustomTextFormField(
                               labelText: 'password',
                               controller: _passwordController,
                               validator: passwordValidator),
 
-                          const SizedBox(height: 10),
                           // CustomTextfield(
-                          //   validator: phoneNumberValidator,
-                          //   hinttext: 'phone no.',
-                          //   controller: _phoneNoController,
+                          //   validator: passwordValidator,
+                          //   hinttext: 'password',
+                          //   controller: _passwordController,
                           // ),
-                          CustomTextFormField(
-                              labelText: 'phone no.',
-                              controller: _phoneNoController,
-                              validator: phoneNumberValidator),
-
                           const SizedBox(height: 5),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -168,13 +162,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                   Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => SigninScreen(),
+                                      builder: (context) => SignupScreen(),
                                     ),
                                     (route) => false,
                                   );
                                 },
                                 child: Text(
-                                  'Already Account | Login',
+                                  'Create Account | Signup',
                                   style: GoogleFonts.poppins(
                                     color: onTertiaryColor,
                                     fontSize: 13,
@@ -187,19 +181,14 @@ class _SignupScreenState extends State<SignupScreen> {
                           Center(
                             child: CustomButton(
                               inverse: true,
-                              label: 'SIGNUP',
+                              label: 'LOGIN',
                               onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  BlocProvider.of<SignUpBloc>(context).add(
-                                    SignUpUserEvent(
-                                        email: _emailController.text.trim(),
-                                        password:
-                                            _passwordController.text.trim(),
-                                        userDetails: {
-                                          'email': _emailController.text.trim(),
-                                          'phone':
-                                              _phoneNoController.text.trim(),
-                                        }),
+                                if (_formkey.currentState!.validate()) {
+                                  BlocProvider.of<SigninBloc>(context).add(
+                                    SigninEvent(
+                                      email: _emailController.text.trim(),
+                                      password: _passwordController.text.trim(),
+                                    ),
                                   );
                                 }
                               },
