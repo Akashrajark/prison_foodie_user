@@ -33,7 +33,7 @@ class _CustomButtonState extends State<CustomButton> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 100),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).colorScheme.shadow,
@@ -50,7 +50,7 @@ class _CustomButtonState extends State<CustomButton> {
         border: widget.inverse
             ? null
             : Border.all(
-                color: Theme.of(context).colorScheme.outline,
+                color: Theme.of(context).colorScheme.primary,
                 width: 1,
               ),
       ),

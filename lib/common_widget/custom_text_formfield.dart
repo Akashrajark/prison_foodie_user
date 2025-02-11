@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:prison_foodie_user/theme/app_theme.dart';
 
 class CustomTextFormField extends StatelessWidget {
+  final bool isLoading;
   final String labelText;
   final String? title;
   final double width;
@@ -23,6 +23,7 @@ class CustomTextFormField extends StatelessWidget {
     this.maxLines,
     this.minLines,
     this.contentPadding,
+    required this.isLoading,
   });
 
   @override
@@ -35,17 +36,11 @@ class CustomTextFormField extends StatelessWidget {
           if (title != null)
             Text(
               title!,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium!
-                  .copyWith(color: onTertiaryColor),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           if (title != null) const SizedBox(height: 5),
           TextFormField(
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(color: onTertiaryColor),
+            enabled: !isLoading,
             controller: controller,
             validator: validator,
             minLines: minLines,

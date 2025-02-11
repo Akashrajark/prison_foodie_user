@@ -8,6 +8,7 @@ import 'package:prison_foodie_user/features/bottom_navBar_screen/bottom_navbar_s
 import 'package:prison_foodie_user/features/signin/signin_screen.dart';
 import 'package:prison_foodie_user/theme/app_theme.dart';
 import 'package:prison_foodie_user/util/value_validator.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'sign_up_bloc/sign_up_bloc.dart';
 
@@ -24,6 +25,25 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneNoController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    Future.delayed(
+        const Duration(
+          milliseconds: 100,
+        ), () {
+      User? currentUser = Supabase.instance.client.auth.currentUser;
+      if (currentUser != null) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const CustomBottomNavBar(),
+          ),
+        );
+      }
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +83,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: 100,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: onprimaryColor, width: 8),
+                      border: Border.all(color: primaryColor, width: 8),
                     ),
                   ),
                 ),
@@ -75,7 +95,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: 100,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: onprimaryColor, width: 8),
+                      border: Border.all(color: primaryColor, width: 8),
                     ),
                   ),
                 ),
@@ -91,16 +111,16 @@ class _SignupScreenState extends State<SignupScreen> {
                           const Center(
                             child: CircleAvatar(
                               radius: 56,
-                              backgroundColor: onprimaryColor,
+                              backgroundColor: primaryColor,
                               child: CircleAvatar(
                                 radius: 46,
-                                backgroundColor: onSecondaryColor,
+                                backgroundColor: secondaryColor,
                                 child: CircleAvatar(
                                   radius: 43,
-                                  backgroundColor: onprimaryColor,
+                                  backgroundColor: primaryColor,
                                   child: Icon(
                                     Icons.restaurant,
-                                    color: onSecondaryColor,
+                                    color: secondaryColor,
                                     size: 63,
                                   ),
                                 ),
@@ -122,6 +142,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           //   controller: _uesrnameController,
                           // ),
                           CustomTextFormField(
+                              isLoading: state is SignUpLoadingState,
                               labelText: 'username',
                               controller: _uesrnameController,
                               validator: alphabeticWithSpaceValidator),
@@ -133,6 +154,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           //   controller: _emailController,
                           // ),
                           CustomTextFormField(
+                              isLoading: state is SignUpLoadingState,
                               labelText: 'email',
                               controller: _emailController,
                               validator: emailValidator),
@@ -144,6 +166,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           //   controller: _passwordController,
                           // ),
                           CustomTextFormField(
+                              isLoading: state is SignUpLoadingState,
                               labelText: 'password',
                               controller: _passwordController,
                               validator: passwordValidator),
@@ -155,6 +178,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           //   controller: _phoneNoController,
                           // ),
                           CustomTextFormField(
+                              isLoading: state is SignUpLoadingState,
                               labelText: 'phone no.',
                               controller: _phoneNoController,
                               validator: phoneNumberValidator),
@@ -186,6 +210,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           const SizedBox(height: 20),
                           Center(
                             child: CustomButton(
+                              isLoading: state is SignUpLoadingState,
                               inverse: true,
                               label: 'SIGNUP',
                               onPressed: () {

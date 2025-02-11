@@ -79,7 +79,7 @@ class _SigninScreenState extends State<SigninScreen> {
                     height: 100,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: onprimaryColor, width: 8),
+                      border: Border.all(color: primaryColor, width: 8),
                     ),
                   ),
                 ),
@@ -91,7 +91,7 @@ class _SigninScreenState extends State<SigninScreen> {
                     height: 100,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: onprimaryColor, width: 8),
+                      border: Border.all(color: primaryColor, width: 8),
                     ),
                   ),
                 ),
@@ -107,16 +107,16 @@ class _SigninScreenState extends State<SigninScreen> {
                           const Center(
                             child: CircleAvatar(
                               radius: 56,
-                              backgroundColor: onprimaryColor,
+                              backgroundColor: primaryColor,
                               child: CircleAvatar(
                                 radius: 46,
-                                backgroundColor: onSecondaryColor,
+                                backgroundColor: secondaryColor,
                                 child: CircleAvatar(
                                   radius: 43,
-                                  backgroundColor: onprimaryColor,
+                                  backgroundColor: primaryColor,
                                   child: Icon(
                                     Icons.restaurant,
-                                    color: onSecondaryColor,
+                                    color: secondaryColor,
                                     size: 63,
                                   ),
                                 ),
@@ -124,7 +124,7 @@ class _SigninScreenState extends State<SigninScreen> {
                             ),
                           ),
                           Text(
-                            'LOGIN',
+                            'SIGN IN',
                             style: GoogleFonts.poppins(
                               color: onTertiaryColor,
                               fontSize: 24,
@@ -138,12 +138,14 @@ class _SigninScreenState extends State<SigninScreen> {
                           //   controller: _emailController,
                           // ),
                           CustomTextFormField(
+                              isLoading: state is SigninLoadingState,
                               labelText: 'email',
                               controller: _emailController,
                               validator: emailValidator),
 
                           const SizedBox(height: 10),
                           CustomTextFormField(
+                              isLoading: state is SigninLoadingState,
                               labelText: 'password',
                               controller: _passwordController,
                               validator: passwordValidator),
@@ -180,6 +182,7 @@ class _SigninScreenState extends State<SigninScreen> {
                           const SizedBox(height: 20),
                           Center(
                             child: CustomButton(
+                              isLoading: state is SigninLoadingState,
                               inverse: true,
                               label: 'LOGIN',
                               onPressed: () {

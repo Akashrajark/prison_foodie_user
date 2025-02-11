@@ -99,13 +99,13 @@ class OrderCardScreen extends StatelessWidget {
                     Text(
                       'Order details',
                       style: GoogleFonts.poppins(
-                        color: onSecondaryColor,
+                        color: secondaryColor,
                         fontSize: 13,
                       ),
                     ),
                     const Icon(
                       Icons.keyboard_arrow_right,
-                      color: onSecondaryColor,
+                      color: secondaryColor,
                     ),
                   ],
                 ),

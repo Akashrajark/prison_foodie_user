@@ -4,6 +4,10 @@ import 'package:prison_foodie_user/common_widget/custom_button.dart';
 import 'package:prison_foodie_user/features/address_screen/address_screen.dart';
 import 'package:prison_foodie_user/features/profile/profile_edit_page.dart';
 import 'package:prison_foodie_user/theme/app_theme.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../common_widget/custom_alert_dialog.dart';
+import '../signin/signin_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -92,7 +96,32 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ),
-          const Divider()
+          const Divider(),
+          CustomButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => CustomAlertDialog(
+                  title: "Sign Out",
+                  content: const Text(
+                    "Are you sure you want to Sign Out? Clicking 'Sign Out' will end your current session and require you to sign in again to access your account.",
+                  ),
+                  primaryButton: "Sign Out",
+                  onPrimaryPressed: () {
+                    Supabase.instance.client.auth.signOut();
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SigninScreen(),
+                        ),
+                        (route) => false);
+                  },
+                ),
+              );
+            },
+            label: 'Sign Out',
+            iconData: Icons.logout_rounded,
+          )
         ],
       ),
     );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:prison_foodie_user/features/home/menu_item_card.dart';
 import 'package:prison_foodie_user/theme/app_theme.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
@@ -122,14 +121,14 @@ class OrderDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) => const MenuItemCard(),
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 10),
-                  itemCount: 6,
-                ),
+                // ListView.separated(
+                //   shrinkWrap: true,
+                //   physics: const NeverScrollableScrollPhysics(),
+                //   itemBuilder: (context, index) => const MenuItemCard(),
+                //   separatorBuilder: (context, index) =>
+                //       const SizedBox(height: 10),
+                //   itemCount: 6,
+                // ),
               ],
             ),
           ],

@@ -14,7 +14,7 @@ class CustomChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: secondaryColor.withOpacity(0.2),
+      color: secondaryColor.withAlpha(2),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
         side: const BorderSide(

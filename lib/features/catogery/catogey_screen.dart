@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:prison_foodie_user/features/home/menu_item_card.dart';
 import 'package:prison_foodie_user/theme/app_theme.dart';
 
 class CatogeyScreen extends StatelessWidget {
@@ -19,14 +18,12 @@ class CatogeyScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Flexible(
-        child: ListView.separated(
-          shrinkWrap: true,
-          itemBuilder: (context, index) => const MenuItemCard(),
-          separatorBuilder: (context, index) => const Divider(),
-          itemCount: 5,
-        ),
-      ),
+      // body: ListView.separated(
+      //   shrinkWrap: true,
+      //   itemBuilder: (context, index) => const MenuItemCard(),
+      //   separatorBuilder: (context, index) => const Divider(),
+      //   itemCount: 5,
+      // ),
     );
   }
 }
