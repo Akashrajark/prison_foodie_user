@@ -25,16 +25,23 @@ class MenusBloc extends Bloc<MenusEvent, MenusState> {
           if (event.params['query'] != null) {
             query = query.ilike('name', '%${event.params['query']}%');
           }
+          if (event.params['category_id'] != null) {
+            query = query.eq('category_id', '${event.params['category_id']}');
+          }
 
           List<Map<String, dynamic>> menus =
               await query.order('name', ascending: true);
-
-          List<Map<String, dynamic>> categories =
-              await categoriesTable.select('*').order('name', ascending: true);
+          List<Map<String, dynamic>> categories = [];
+          if (event.params['category_id'] == null) {
+            categories = await categoriesTable
+                .select('*')
+                .order('name', ascending: true);
+          }
 
           emit(MenusGetSuccessState(menus: menus, categories: categories));
-        } else if (event is AddMenuEvent) {
-          await table.insert(event.menuDetails);
+        } else if (event is AddToCartEvent) {
+          await supabaseClient.rpc('add_to_user_cart',
+              params: event.menuDetails);
 
           emit(MenusSuccessState());
         } else if (event is EditMenuEvent) {

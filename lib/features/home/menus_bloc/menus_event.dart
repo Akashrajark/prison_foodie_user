@@ -9,10 +9,10 @@ class GetAllMenusEvent extends MenusEvent {
   GetAllMenusEvent({required this.params});
 }
 
-class AddMenuEvent extends MenusEvent {
+class AddToCartEvent extends MenusEvent {
   final Map<String, dynamic> menuDetails;
 
-  AddMenuEvent({required this.menuDetails});
+  AddToCartEvent({required this.menuDetails});
 }
 
 class EditMenuEvent extends MenusEvent {

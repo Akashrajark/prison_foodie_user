@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/web.dart';
+import 'package:prison_foodie_user/features/address_screen/add_edit_address_screen.dart';
 
-class Address {
-  final int id;
-  final String address;
-  final String pincode;
-
-  Address({
-    required this.id,
-    required this.address,
-    required this.pincode,
-  });
-}
+import '../../common_widget/custom_alert_dialog.dart';
+import 'address_bloc/address_bloc.dart';
 
 class AddressScreen extends StatefulWidget {
   const AddressScreen({super.key});
@@ -20,143 +14,182 @@ class AddressScreen extends StatefulWidget {
 }
 
 class _AddressScreenState extends State<AddressScreen> {
-  List<Address> addresses = [];
-  int? selectedAddressId;
-  int _nextId = 0;
+  final AddressBloc _addressBloc = AddressBloc();
 
-  void _showAddAddressDialog() {
-    final formKey = GlobalKey<FormState>();
-    String newAddress = '';
-    String newPincode = '';
+  Map<String, dynamic> params = {
+    'query': null,
+  };
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add New Address'),
-        content: Form(
-          key: formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Full Address',
-                  hintText: 'Enter your complete address',
-                ),
-                maxLines: 3,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter address';
-                  }
-                  return null;
-                },
-                onSaved: (value) => newAddress = value!,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Pincode',
-                  hintText: 'Enter 6-digit pincode',
-                ),
-                keyboardType: TextInputType.number,
-                maxLength: 6,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter pincode';
-                  }
-                  if (value.length != 6) {
-                    return 'Pincode must be 6 digits';
-                  }
-                  return null;
-                },
-                onSaved: (value) => newPincode = value!,
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                formKey.currentState!.save();
-                setState(() {
-                  addresses.add(Address(
-                    id: _nextId,
-                    address: newAddress,
-                    pincode: newPincode,
-                  ));
-                  selectedAddressId = _nextId;
-                  _nextId++;
-                });
-                Navigator.pop(context);
-              }
-            },
-            child: const Text('Save'),
-          ),
-        ],
-      ),
-    );
+  List<Map<String, dynamic>> _address = [];
+
+  @override
+  void initState() {
+    getAddress();
+    super.initState();
   }
 
-  void _deleteAddress(int id) {
-    setState(() {
-      addresses.removeWhere((address) => address.id == id);
-      if (selectedAddressId == id) {
-        selectedAddressId = addresses.isNotEmpty ? addresses.first.id : null;
-      }
-    });
+  void getAddress() {
+    _addressBloc.add(GetAllAddressEvent(params: params));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Manage Addresses'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: addresses.length,
-                itemBuilder: (context, index) {
-                  final address = addresses[index];
-                  return Card(
-                    child: ListTile(
-                      leading: Radio<int>(
-                        value: address.id,
-                        groupValue: selectedAddressId,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedAddressId = value;
-                          });
-                        },
-                      ),
-                      title: Text(address.address),
-                      subtitle: Text('Pincode: ${address.pincode}'),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () => _deleteAddress(address.id),
-                      ),
-                    ),
-                  );
+    return BlocProvider.value(
+      value: _addressBloc,
+      child: BlocConsumer<AddressBloc, AddressState>(
+        listener: (context, state) {
+          if (state is AddressFailureState) {
+            showDialog(
+              context: context,
+              builder: (context) => CustomAlertDialog(
+                title: 'Failure',
+                description: state.message,
+                primaryButton: 'Try Again',
+                onPrimaryPressed: () {
+                  getAddress();
+                  Navigator.pop(context);
                 },
               ),
+            );
+          } else if (state is AddressGetSuccessState) {
+            _address = state.address;
+            Logger().w(_address);
+            setState(() {});
+          } else if (state is AddressSuccessState) {
+            getAddress();
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Saved Addresses'),
             ),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.add_location_alt),
-              label: const Text('Add New Address'),
-              onPressed: _showAddAddressDialog,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
+            body: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _address.length,
+              itemBuilder: (context, index) {
+                return AddressCard(
+                  address: _address[index],
+                  onTap: () {},
+                  onEdit: () {},
+                );
+              },
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BlocProvider.value(
+                      value: _addressBloc,
+                      child: AddEditAddressScreen(),
+                    ),
+                  ),
+                );
+              },
+              child: const Icon(Icons.add),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class AddressCard extends StatelessWidget {
+  final Map<String, dynamic> address;
+  final VoidCallback onTap;
+  final VoidCallback onEdit;
+
+  const AddressCard({
+    super.key,
+    required this.address,
+    required this.onTap,
+    required this.onEdit,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: address['isSelected']
+              ? Theme.of(context).primaryColor
+              : Colors.grey.shade200,
+          width: 1.5,
+        ),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    address['title'],
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit_outlined, size: 20),
+                    onPressed: onEdit,
+                  ),
+                ],
               ),
-            ),
-          ],
+              const Divider(height: 20),
+              const SizedBox(height: 8),
+              Text(
+                '📍 ${address['addressLine']}',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey.shade800,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '🏙️ ${address['place']}',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey.shade800,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '🏘️ ${address['district']}',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey.shade800,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '🌆 ${address['state']}',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey.shade800,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '📌 Pincode: ${address['pincode']}',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey.shade800,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

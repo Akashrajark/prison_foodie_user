@@ -20,7 +20,7 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final TextEditingController _uesrnameController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneNoController = TextEditingController();
@@ -144,7 +144,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           CustomTextFormField(
                               isLoading: state is SignUpLoadingState,
                               labelText: 'username',
-                              controller: _uesrnameController,
+                              controller: _usernameController,
                               validator: alphabeticWithSpaceValidator),
 
                           const SizedBox(height: 10),
@@ -224,6 +224,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                           'email': _emailController.text.trim(),
                                           'phone':
                                               _phoneNoController.text.trim(),
+                                          'user_name':
+                                              _usernameController.text.trim(),
                                         }),
                                   );
                                 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/web.dart';
-
 import '../../common_widget/custom_alert_dialog.dart';
 import '../../theme/app_theme.dart';
 import '../../util/check_login.dart';
@@ -25,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Map<String, dynamic> params = {
     'query': null,
+    'category_id': null,
   };
 
   List<Map> _menus = [], _categorie = [];
@@ -87,30 +87,47 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 160,
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) => CatogeryCard(
-                    label: _categorie[index]['name'],
-                    image: _categorie[index]['image_url'],
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CatogeyScreen(),
-                          ));
-                    },
-                  ),
-                  separatorBuilder: (context, index) => const SizedBox(
-                    width: 10,
-                  ),
-                  itemCount: _categorie.length,
+              if (state is MenusLoadingState)
+                Center(
+                  child: CircularProgressIndicator(),
                 ),
-              ),
+              if (state is MenusGetSuccessState && _menus.isEmpty)
+                Center(
+                  child: Text(
+                    'No Category Found!',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(color: Colors.black),
+                  ),
+                ),
+              if (state is MenusGetSuccessState && _menus.isNotEmpty)
+                SizedBox(
+                  height: 160,
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) => CatogeryCard(
+                      label: _categorie[index]['name'],
+                      image: _categorie[index]['image_url'],
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CatogeyScreen(
+                                categoryid: _categorie[index]['id'],
+                              ),
+                            ));
+                      },
+                    ),
+                    separatorBuilder: (context, index) => const SizedBox(
+                      width: 10,
+                    ),
+                    itemCount: _categorie.length,
+                  ),
+                ),
               Padding(
                 padding: const EdgeInsets.only(
                     left: 16, top: 20, bottom: 10, right: 16),
@@ -123,24 +140,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              Expanded(
-                child: GridView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                  shrinkWrap: true,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: .7,
-                  ),
-                  itemBuilder: (context, index) => MenuItemCard(
-                    image: _menus[index]['image_url'],
-                    price: _menus[index]['price'].toString(),
-                    name: _menus[index]['name'],
-                  ),
-                  itemCount: _menus.length,
+              if (state is MenusLoadingState)
+                Center(
+                  child: CircularProgressIndicator(),
                 ),
-              ),
+              if (state is MenusGetSuccessState && _menus.isEmpty)
+                Center(
+                  child: Text(
+                    'No Menu Found!',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(color: Colors.black),
+                  ),
+                ),
+              if (state is MenusGetSuccessState && _menus.isNotEmpty)
+                Expanded(
+                  child: GridView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                    shrinkWrap: true,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: .7,
+                    ),
+                    itemBuilder: (context, index) => MenuItemCard(
+                      menuDetails: _menus[index],
+                    ),
+                    itemCount: _menus.length,
+                  ),
+                ),
             ],
           );
         },
