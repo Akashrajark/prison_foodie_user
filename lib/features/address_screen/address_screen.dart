@@ -9,7 +9,8 @@ import '../../common_widget/custom_alert_dialog.dart';
 import 'address_bloc/address_bloc.dart';
 
 class AddressScreen extends StatefulWidget {
-  const AddressScreen({super.key});
+  final bool pickMode;
+  const AddressScreen({super.key, this.pickMode = false});
 
   @override
   State<AddressScreen> createState() => _AddressScreenState();
@@ -73,7 +74,9 @@ class _AddressScreenState extends State<AddressScreen> {
                     itemBuilder: (context, index) {
                       return AddressCard(
                         address: _address[index],
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pop(context, _address[index]['id']);
+                        },
                         onDelete: () async {
                           await Supabase.instance.client
                               .from('address')
@@ -113,12 +116,14 @@ class AddressCard extends StatelessWidget {
   final Map<String, dynamic> address;
   final VoidCallback onTap;
   final VoidCallback onDelete;
+  final bool pickMode;
 
   const AddressCard({
     super.key,
     required this.address,
     required this.onTap,
     required this.onDelete,
+    this.pickMode = false,
   });
 
   @override
@@ -153,10 +158,11 @@ class AddressCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.delete, size: 20),
-                    onPressed: onDelete,
-                  ),
+                  if (!pickMode)
+                    IconButton(
+                      icon: const Icon(Icons.delete, size: 20),
+                      onPressed: onDelete,
+                    ),
                 ],
               ),
               const Divider(height: 20),

@@ -33,11 +33,15 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
 
           emit(OrdersGetSuccessState(orders: orders));
         } else if (event is AddOrderEvent) {
-          await supabaseClient.rpc('create_new_order_from_cart', params: {
-            'p_user_id': supabaseClient.auth.currentUser!.id,
-            'p_status': 'Pending',
-            'p_price': 10000,
+          await supabaseClient.rpc('order_v2', params: {
+            'p_address_id': event.orderDetails['address_id'],
           });
+          // await supabaseClient.rpc('create_new_order_from_cart', params: {
+          //   'p_user_id': supabaseClient.auth.currentUser!.id,
+          //   'p_address_id': event.orderDetails['address_id'],
+          //   'p_status': 'Pending',
+          //   'p_price': event.orderDetails['price'],
+          // });
           emit(OrdersSuccessState());
         } else if (event is EditOrderEvent) {
           await table.update(event.orderDetails).eq('id', event.orderId);

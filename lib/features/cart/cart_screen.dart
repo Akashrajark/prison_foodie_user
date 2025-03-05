@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/web.dart';
 import 'package:prison_foodie_user/common_widget/custom_button.dart';
+import 'package:prison_foodie_user/features/address_screen/address_screen.dart';
 import 'package:prison_foodie_user/features/orders/orders_bloc/orders_bloc.dart';
 import 'package:prison_foodie_user/theme/app_theme.dart';
 
@@ -156,9 +157,20 @@ class _CartScreenState extends State<CartScreen> {
                   const SizedBox(height: 16),
                   CustomButton(
                     inverse: true,
-                    onPressed: () {
-                      BlocProvider.of<OrdersBloc>(context)
-                          .add(AddOrderEvent(orderDetails: {}));
+                    onPressed: () async {
+                      int? addressId = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddressScreen(
+                            pickMode: true,
+                          ),
+                        ),
+                      );
+
+                      if (addressId != null) {
+                        BlocProvider.of<OrdersBloc>(context).add(AddOrderEvent(
+                            orderDetails: {'address_id': addressId}));
+                      }
                     },
                     label: 'Order Now',
                   ),
