@@ -21,6 +21,7 @@ class EditProfile extends StatefulWidget {
 class _EditProfileState extends State<EditProfile> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final ProfileBloc _profileBloc = ProfileBloc();
@@ -33,6 +34,7 @@ class _EditProfileState extends State<EditProfile> {
     });
     _nameController.text = widget.profileDetails['user_name'];
     _phoneController.text = widget.profileDetails['phone'];
+    _emailController.text = widget.profileDetails['email'];
     super.initState();
   }
 
@@ -80,37 +82,40 @@ class _EditProfileState extends State<EditProfile> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Profile Image Picker
-                    Center(
-                      child: Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          CustomImagePickerButton(
-                            selectedImage: widget.profileDetails['photo'],
-                            height: 150,
-                            width: 150,
-                            borderRadius: 100,
-                            onPick: (pick) {
-                              file = pick;
-                              setState(() {});
-                            },
-                          ),
-                          if (file != null)
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: IconButton(
-                                icon: const Icon(Icons.close,
-                                    color: Colors.white),
-                                onPressed: () {
-                                  setState(() {
-                                    file = null;
-                                  });
-                                },
-                              ),
+                    AbsorbPointer(
+                      absorbing: true,
+                      child: Center(
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            CustomImagePickerButton(
+                              selectedImage: widget.profileDetails['photo'],
+                              height: 150,
+                              width: 150,
+                              borderRadius: 100,
+                              onPick: (pick) {
+                                file = pick;
+                                setState(() {});
+                              },
                             ),
-                        ],
+                            if (file != null)
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(Icons.close,
+                                      color: Colors.white),
+                                  onPressed: () {
+                                    setState(() {
+                                      file = null;
+                                    });
+                                  },
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 30),
@@ -142,9 +147,26 @@ class _EditProfileState extends State<EditProfile> {
                     CustomTextFormField(
                       isLoading: state is ProfileLoadingState,
                       controller: _phoneController,
-                      validator: percentageValidator,
+                      validator: phoneNumberValidator,
                       labelText: 'Enter your phone number',
                       keyboardType: TextInputType.phone,
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Phone Field
+                    Text(
+                      'Email',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    CustomTextFormField(
+                      isLoading: state is ProfileLoadingState,
+                      controller: _emailController,
+                      validator: emailValidator,
+                      labelText: 'Enter your email',
+                      keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 40),
 
@@ -153,7 +175,8 @@ class _EditProfileState extends State<EditProfile> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           Map<String, dynamic> details = {
-                            'name': _nameController.text.trim(),
+                            'user_name': _nameController.text.trim(),
+                            'email': _emailController.text.trim(),
                             'phone': _phoneController.text.trim(),
                           };
 

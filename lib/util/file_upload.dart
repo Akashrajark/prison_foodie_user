@@ -1,15 +1,14 @@
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:logger/web.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-Future<String> uploadFile(
-    String folder, Uint8List file, String fileName) async {
+Future<String> uploadFile(String folder, File file, String fileName) async {
   try {
     StorageFileApi storageBucket =
         Supabase.instance.client.storage.from('docs');
 
-    String filePath = await storageBucket.uploadBinary(
+    String filePath = await storageBucket.upload(
       '$folder/${DateTime.now().millisecondsSinceEpoch.toString()}${formatFileName(fileName)}',
       file,
     );
