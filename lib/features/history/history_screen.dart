@@ -19,7 +19,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   Map<String, dynamic> params = {
     'query': null,
-    'status': 'Complete',
+    'status': 'Completed',
   };
 
   List<Map<String, dynamic>> _orders = [];

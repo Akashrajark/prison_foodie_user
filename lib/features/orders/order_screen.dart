@@ -20,7 +20,7 @@ class _OrderScreenState extends State<OrderScreen> {
 
   Map<String, dynamic> params = {
     'query': null,
-    'status': null,
+    'status': 'Pending',
   };
 
   List<Map<String, dynamic>> _orders = [];
