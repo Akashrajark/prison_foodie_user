@@ -36,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
+    return BlocProvider<ProfileBloc>.value(
       value: _profileBloc,
       child: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
@@ -68,14 +68,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  const CircleAvatar(
-                    radius: 60,
-                    backgroundImage: AssetImage('assets/profile_picture.jpg'),
-                    child: Icon(Icons.person, size: 60),
-                  ),
+                  if (_profile['photo'] != null)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: Image.network(
+                        _profile['photo'],
+                        height: 100,
+                        width: 100,
+                      ),
+                    ),
+                  if (_profile['photo'] == null)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: Container(
+                        color: Colors.grey,
+                        height: 100,
+                        width: 100,
+                        child: Icon(
+                          Icons.person,
+                          color: Colors.white,
+                          size: 50,
+                        ),
+                      ),
+                    ),
                   const SizedBox(height: 20),
-                  const Text(
-                    'John Doe',
+                  Text(
+                    _profile['user_name'] ?? '',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -88,14 +106,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ListTile(
                           leading: const Icon(Icons.phone),
                           title: const Text('Phone'),
-                          subtitle: const Text('+1 (555) 123-4567'),
+                          subtitle: Text(_profile['phone'] ?? ''),
                           onTap: () {/* Add phone action */},
                         ),
                         const Divider(height: 1),
                         ListTile(
                           leading: const Icon(Icons.email),
                           title: const Text('Email'),
-                          subtitle: const Text('john.doe@example.com'),
+                          subtitle: Text(_profile['email'] ?? ''),
                           onTap: () {/* Add email action */},
                         ),
                       ],

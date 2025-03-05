@@ -1,0 +1,2 @@
+/Users/arjunraj/Documents/Work/college project 25/prison_food/prison_foodie_user/android/app/.cxx/Debug/3y72if6v/x86/CMakeFiles/edit_cache.dir
+/Users/arjunraj/Documents/Work/college project 25/prison_food/prison_foodie_user/android/app/.cxx/Debug/3y72if6v/x86/CMakeFiles/rebuild_cache.dir

@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/web.dart';
 import 'package:prison_foodie_user/features/address_screen/add_edit_address_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../common_widget/custom_alert_dialog.dart';
 import 'address_bloc/address_bloc.dart';
@@ -64,20 +66,29 @@ class _AddressScreenState extends State<AddressScreen> {
             appBar: AppBar(
               title: const Text('Saved Addresses'),
             ),
-            body: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _address.length,
-              itemBuilder: (context, index) {
-                return AddressCard(
-                  address: _address[index],
-                  onTap: () {},
-                  onEdit: () {},
-                );
-              },
-            ),
+            body: state is AddressGetSuccessState
+                ? ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _address.length,
+                    itemBuilder: (context, index) {
+                      return AddressCard(
+                        address: _address[index],
+                        onTap: () {},
+                        onDelete: () async {
+                          await Supabase.instance.client
+                              .from('address')
+                              .delete()
+                              .eq('id', _address[index]['id']);
+
+                          _addressBloc.add(GetAllAddressEvent(params: params));
+                        },
+                      );
+                    },
+                  )
+                : Center(child: const CupertinoActivityIndicator()),
             floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => BlocProvider.value(
@@ -86,6 +97,8 @@ class _AddressScreenState extends State<AddressScreen> {
                     ),
                   ),
                 );
+
+                _addressBloc.add(GetAllAddressEvent(params: params));
               },
               child: const Icon(Icons.add),
             ),
@@ -99,13 +112,13 @@ class _AddressScreenState extends State<AddressScreen> {
 class AddressCard extends StatelessWidget {
   final Map<String, dynamic> address;
   final VoidCallback onTap;
-  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   const AddressCard({
     super.key,
     required this.address,
     required this.onTap,
-    required this.onEdit,
+    required this.onDelete,
   });
 
   @override
@@ -116,7 +129,7 @@ class AddressCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: address['isSelected']
+          color: address['isSelected'] ?? false
               ? Theme.of(context).primaryColor
               : Colors.grey.shade200,
           width: 1.5,
@@ -141,15 +154,15 @@ class AddressCard extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.edit_outlined, size: 20),
-                    onPressed: onEdit,
+                    icon: const Icon(Icons.delete, size: 20),
+                    onPressed: onDelete,
                   ),
                 ],
               ),
               const Divider(height: 20),
               const SizedBox(height: 8),
               Text(
-                '📍 ${address['addressLine']}',
+                '📍 ${address['address_line']}',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey.shade800,

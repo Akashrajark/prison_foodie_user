@@ -7,6 +7,8 @@
         android:label="prison_foodie_user"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyCuzNUy2712IWGsruPcHOWErPcfZtmmxGY"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
